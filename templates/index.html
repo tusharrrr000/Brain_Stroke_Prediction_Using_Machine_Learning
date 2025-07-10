@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/webp" href="{{ url_for('static', filename='logo.png') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Stroke Predictor</title>
+    <style>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animate-gradient {
+            position: relative;
+            overflow: hidden;
+        }
+        .video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            opacity: 0.5
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="animate-gradient min-h-screen flex items-center justify-center p-4 text-gray-800">
+    <video autoplay muted loop class="video-background">
+        <source src="{{ url_for('static', filename='background.mp4') }}" type="video/mp4">
+    </video>
+    <div class="container max-w-6xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                Stroke Risk Predictor
+            </h1>
+            <p class="text-gray-600 mt-2">Enter your details for an AI-powered stroke risk assessment</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="order-2 lg:order-1">
+                <img class="rounded-xl shadow-lg w-full h-full object-cover" src="{{ url_for('static', filename='strokeimg.jpg') }}" alt="Medical Analysis" />
+            </div>
+            
+            <div class="order-1 lg:order-2">
+                <form action="{{ url_for('predict') }}" method="post" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Gender</label>
+                            <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Age</label>
+                            <input type="number" name="age" min="1" max="120" placeholder="Enter age (1-120)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Hypertension</label>
+                            <select name="hypertension" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Heart Disease</label>
+                            <select name="disease" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Ever Married</label>
+                            <select name="married" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Work Type</label>
+                            <select name="work" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">Government Job</option>
+                                <option value="1">Never worked</option>
+                                <option value="2">Private</option>
+                                <option value="3">Self-employed</option>
+                                <option value="4">Children</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Smoking Status</label>
+                            <select name="smoking" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">Unknown</option>
+                                <option value="1">Formerly smoked</option>
+                                <option value="2">Never smoked</option>
+                                <option value="3">Smokes</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Average Glucose Level</label>
+                            <input type="number" step="0.01" name="avg_glucose_level" placeholder="Enter glucose level" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">BMI</label>
+                            <input type="number" step="0.01" name="bmi" placeholder="Enter BMI" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Residence Type</label>
+                            <select name="residence" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="0">Rural</option>
+                                <option value="1">Urban</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        Predict Risk
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if predictor_text %}
+        <div class="mt-8 text-center">
+            <div class="inline-block px-8 py-4 rounded-lg {% if 'Congratulations' in predictor_text %}bg-green-100 border-green-200{% else %}bg-red-100 border-red-200{% endif %} border-2 shadow-lg">
+                <h2 class="text-2xl font-bold {% if 'Congratulations' in predictor_text %}text-green-800{% else %}text-red-800{% endif %}">
+                    {{predictor_text}}
+                </h2>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
